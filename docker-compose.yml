@@ -2,7 +2,7 @@ version: '3'
 
 services: 
 
-  back-end:
+  backend:
     build: 
       context: backend
     container_name: Backend
@@ -17,7 +17,7 @@ services:
       - "8080:8080"
     command: npm run start
 
-  front-end:
+  frontend:
     build: 
       context: frontend
     container_name: Frontend
