@@ -31,6 +31,18 @@ services:
     ports: 
       - "5173:5173"
     command: npm run dev
+  nginx:
+    image: nginx:alpine
+    container_name: nginx-proxy
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - node-network
 
 networks:
   node-network:
