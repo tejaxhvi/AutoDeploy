@@ -31,16 +31,17 @@ services:
     ports: 
       - "5173:5173"
     command: npm run dev
-  nginx:
-    image: nginx:alpine
-    container_name: nginx-proxy
+  caddy:
+    image: caddy:latest
+    container_name: Caddy
+    restart: unless-stopped
     ports:
       - "80:80"
+      - "443:443"
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
-    depends_on:
-      - backend
-      - frontend
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
     networks:
       - node-network
 

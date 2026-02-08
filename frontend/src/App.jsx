@@ -27,7 +27,7 @@ const FileUpload = () => {
       // 4. Send the request
       // Note: We do NOT need to manually set 'Content-Type': 'multipart/form-data'.
       // The browser/fetch sets the correct boundary automatically when using FormData.
-      const response = await fetch('http://localhost:8080/upload', {
+      const response = await fetch('/api/upload', {
         method: 'POST',
         body: formData,
       });
@@ -42,25 +42,27 @@ const FileUpload = () => {
       }
     } catch (error) {
       console.error('Error uploading file:', error);
-	console.log(error)
+	    console.log(error)
       setMessage('Server error occurred.');
     }
   };
 
   return (
-    <div style={{ padding: '20px', border: '1px solid #ccc', maxWidth: '400px' }}>
-      <h2>File Upload</h2>
-      
-      <input type="file" onChange={handleFileChange} />
-      
-      <button 
-        onClick={handleUpload} 
-        style={{ marginTop: '10px', display: 'block' }}
-      >
-        Upload
-      </button>
+    <div style={{display : 'flex', justifyContent : 'center', alignItems : 'center'}}>
+      <div style={{ padding: '40px', border: '1px solid #ccc', maxWidth: '400px' }}>
+        <h2>File Upload</h2>
+        
+        <input type="file" onChange={handleFileChange} />
+        
+        <button 
+          onClick={handleUpload} 
+          style={{ marginTop: '10px', display: 'block' }}
+        >
+          Upload
+        </button>
 
-      {message && <p>{message}</p>}
+        {message && <p>{message}</p>}
+      </div>
     </div>
   );
 };
