@@ -1,36 +1,23 @@
 version: '3'
 
 services: 
-
   backend:
     build: 
       context: backend
     container_name: Backend
-    working_dir: /usr/src/app
-    networks: 
-      - node-network
-    volumes: 
-      - ./backend:/usr/src/app
-      - /usr/src/app/node_modules
-    tty: true
     ports: 
       - "8080:8080"
-    command: npm run start
 
   frontend:
     build: 
       context: frontend
+      target: build
     container_name: Frontend
-    working_dir: /usr/src/app
-    networks: 
-      - node-network
     volumes: 
-      - ./frontend:/usr/src/app
-      - /usr/src/app/node_modules
-    tty: true
-    ports: 
-      - "5173:5173"
-    command: npm run dev
+      - fronted_build:/app/dist
+    command : sh -c "cp -r /app/dist/* /output"
+    depends_on:
+      - backend
   caddy:
     image: caddy:latest
     container_name: Caddy
@@ -39,13 +26,9 @@ services:
       - "80:80"
       - "443:443"
     volumes:
+      - fronted_build:/srv
       - ./Caddyfile:/etc/caddy/Caddyfile
       - caddy_data:/data
       - caddy_config:/config
-    networks:
-      - node-network
-
-networks:
-  node-network:
-    driver: bridge
+   
 
