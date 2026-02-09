@@ -14,7 +14,7 @@ services:
       target: build
     container_name: Frontend
     volumes: 
-      - fronted_build:/app/dist
+      - frontend_build:/app/dist
     command : sh -c "cp -r /app/dist/* /output"
     depends_on:
       - backend
@@ -26,9 +26,11 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - fronted_build:/srv
+      - frontend_build:/srv
       - ./Caddyfile:/etc/caddy/Caddyfile
       - caddy_data:/data
       - caddy_config:/config
+    depends_on :
+      - frontend
    
 
