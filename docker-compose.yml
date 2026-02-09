@@ -32,5 +32,9 @@ services:
       - caddy_config:/config
     depends_on :
       - frontend
+volumes:
+  frontend_build :
+  caddy_data:
+  caddy_config:
    
 
