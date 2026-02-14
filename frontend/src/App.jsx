@@ -1,70 +1,60 @@
-import React, { useState } from 'react';
 
-const FileUpload = () => {
-  const [file, setFile] = useState(null);
-  const [message, setMessage] = useState('');
+import { useState } from 'react'
+import { Dialog, DialogPanel } from '@headlessui/react'
+import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 
-  // 1. Handle file selection
-  const handleFileChange = (e) => {
-    if (e.target.files) {
-      setFile(e.target.files[0]);
-    }
-  };
-
-  // 2. Handle Form Submission
-  const handleUpload = async () => {
-    if (!file) {
-      setMessage('Please select a file first.');
-      return;
-    }
-
-    // 3. Create FormData object
-    // Browsers use this to format data as "multipart/form-data"
-    const formData = new FormData();
-    formData.append('file', file); // The key 'file' must match the backend middleware
-
-    try {
-      // 4. Send the request
-      // Note: We do NOT need to manually set 'Content-Type': 'multipart/form-data'.
-      // The browser/fetch sets the correct boundary automatically when using FormData.
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
-      });
-
-      const data = await response.json();
-	console.log("Response from backend",data)
-      
-      if (response.ok) {
-        setMessage(`Success: ${data.filename} uploaded!`);
-      } else {
-        setMessage('Upload failed.');
-      }
-    } catch (error) {
-      console.error('Error uploading file:', error);
-	    console.log(error)
-      setMessage('Server error occurred.');
-    }
-  };
+export default function Example() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   return (
-    <div style={{display : 'flex', justifyContent : 'center', alignItems : 'center'}}>
-      <div style={{ padding: '40px', border: '1px solid #ccc', maxWidth: '400px' }}>
-        <h2>File Upload</h2>
-        
-        <input type="file" onChange={handleFileChange} />
-        
-        <button 
-          onClick={handleUpload} 
-          style={{ marginTop: '10px', display: 'block' }}
+    <div className="bg-gray-900 min-h-[105vh]">
+      <div className="relative isolate px-6 pt-14 lg:px-8">
+        <div
+          aria-hidden="true"
+          className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80"
         >
-          Upload
-        </button>
-
-        {message && <p>{message}</p>}
+          <div
+            style={{
+              clipPath:
+                'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
+            }}
+            className="relative left-[calc(50%-11rem)] aspect-1155/678 w-144.5 -translate-x-1/2 rotate-30 bg-linear-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%-30rem)] sm:w-288.75"
+          />
+        </div>
+        <div className="mx-auto max-w-2xl sm:py-48 lg:pt-32">
+          <div className="text-center">
+            <h1 className="text-6xl font-bold tracking-tight text-balance text-white sm:text-7xl">
+             Deploy your <span className='italic font-extralight'> .html </span > <br /> with domain
+            </h1>
+            <p className="mt-8 text-lg text-pretty text-gray-400 sm:text-xl/8">
+              This is try to clone a Vercel. By creating this project, <br/> I got introduced to DevOps.
+            </p>
+            <div className="mt-10 flex items-center justify-center gap-x-6">
+              <a
+                href="#"
+                className="rounded-md bg-indigo-500 px-5 py-2.5 text-m font-semibold shadow-xs hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+              >
+                Get started
+              </a>
+              <a href="#" className="text-sm/6 font-semibold text-white">
+                Learn more <span aria-hidden="true">→</span>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div
+          aria-hidden="true"
+          className="absolute inset-x-0 top-[calc(100%-1rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]"
+        >
+          <div
+            style={{
+              clipPath:
+                'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
+            }}
+            className="relative left-[calc(50%+3rem)] aspect-1155/678 w-144.5 -translate-x-1/2 bg-linear-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%+36rem)] sm:w-288.75"
+          />
+        </div>
       </div>
     </div>
-  );
-};
-
-export default FileUpload;
+  )
+}
