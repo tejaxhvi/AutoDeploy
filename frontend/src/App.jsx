@@ -1,10 +1,7 @@
 
 import { useState } from 'react'
-import { Dialog, DialogPanel } from '@headlessui/react'
-import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 
 export default function Example() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   return (
     <div className="bg-gray-900 min-h-[105vh]">
@@ -24,7 +21,7 @@ export default function Example() {
         <div className="mx-auto max-w-2xl sm:py-48 lg:pt-32">
           <div className="text-center">
             <h1 className="text-6xl font-bold tracking-tight text-balance text-white sm:text-7xl">
-             Deploy your <span className='italic font-extralight'> .html </span > <br /> with domain
+             Deploy your <span className='font-bold bg-linear-to-r from-pink-500 to-violet-500 bg-clip-text text-transparent'> .html </span > <br /> with domain
             </h1>
             <p className="mt-8 text-lg text-pretty text-gray-400 sm:text-xl/8">
               This is try to clone a Vercel. By creating this project, <br/> I got introduced to DevOps.
