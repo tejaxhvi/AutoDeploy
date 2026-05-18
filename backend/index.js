@@ -8,9 +8,10 @@ const app = express()
 app.use(cors())
 const PORT = process.env.PORT ?? 8080
 
+// Defining Storage for the Multer.
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'uploads/'); // Save files to 'uploads' folder
+  destination: function (req, file, cb) { // cb -> callback function
+    cb(null, `uploads/${file}`); // files will be saved to uploads/<filename>
   },
   filename: function (req, file, cb) {
     // We add a timestamp to the name to avoid overwrites

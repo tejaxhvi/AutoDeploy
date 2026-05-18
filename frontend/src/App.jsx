@@ -1,7 +1,9 @@
 
-import { useState } from 'react'
+import { Routes, Route } from 'react-router'
+import { SignupForm } from './components/signup-form'
+import { LoginForm } from './components/login-form'
 
-export default function Example() {
+function Home() {
 
   return (
     <div className="bg-gray-900 min-h-[105vh]">
@@ -21,14 +23,14 @@ export default function Example() {
         <div className="mx-auto max-w-2xl sm:py-48 lg:pt-32">
           <div className="text-center">
             <h1 className="text-6xl font-bold tracking-tight text-balance text-white sm:text-7xl">
-             Deploy your <span className='font-bold bg-linear-to-r from-pink-500 to-violet-500 bg-clip-text text-transparent'> .html </span > <br /> with domain
+              Deploy your <span className='font-bold bg-linear-to-r from-pink-500 to-violet-500 bg-clip-text text-transparent'> .html </span > <br /> with domain
             </h1>
             <p className="mt-8 text-lg text-pretty text-gray-400 sm:text-xl/8">
-              This is try to clone a Vercel. By creating this project, <br/> I got introduced to DevOps.
+              This is try to clone a Vercel. By creating this project, <br /> I got introduced to DevOps.
             </p>
             <div className="mt-10 flex items-center justify-center gap-x-6">
               <a
-                href="#"
+                href="/signup"
                 className="rounded-md bg-indigo-500 px-5 py-2.5 text-m font-semibold shadow-xs hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
               >
                 Get started
@@ -52,6 +54,19 @@ export default function Example() {
           />
         </div>
       </div>
+    </div>
+  )
+}
+
+export default function App() {
+
+  return (
+    <div>
+      <Routes>
+        <Route path='/' element={<Home />} />
+        <Route path='/signup' element={<SignupForm />} />
+        <Route path='/login' element={<LoginForm />} />
+      </Routes>
     </div>
   )
 }
