@@ -3,6 +3,7 @@ import cors from 'cors'
 import multer from 'multer'
 import fs from 'fs'
 import path from 'path'
+import { ConnectDB } from './mongoClient.js'
 
 const app = express()
 app.use(cors())
@@ -20,13 +21,17 @@ const storage = multer.diskStorage({
   }
 });
 
-const upload = multer({ storage : storage });
+app.post('/signup', (req, res) => {
+  res.status(501).json({ message: 'Signup not implemented yet' })
+})
+
+const upload = multer({ storage: storage });
 
 app.post('/api/upload', upload.single('file'), (req, res) => {
   if (!req.file) {
     return res.status(400).send('No file uploaded.');
   }
-  
+
   // Send back metadata about the uploaded file
   res.json({
     message: 'File uploaded successfully',
@@ -36,11 +41,21 @@ app.post('/api/upload', upload.single('file'), (req, res) => {
 });
 
 
-app.get('/api/',(req,res) => {
-	return res.json({message : "Hellos from the server"})
+app.get('/api/', (req, res) => {
+  return res.json({ message: "Hellos from the server" })
 })
 
+// CONNECTING DATABASE
+
+async function database() {
+  const db = await ConnectDB();
+  const collection = db.collection("ques_ans")
+
+  await collection.insertOne({ name: 'Test', createdAt: new Date() });
+  console.log('Document inserted');
+}
+database()
 
 app.listen(PORT, () => {
-	console.log(`Server is running on PORT ${PORT}`)
+  console.log(`Server is running on PORT ${PORT}`)
 })

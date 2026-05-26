@@ -63,7 +63,7 @@ export function SignupForm({
                       Sign up with Google
                     </Button>
                     <FieldDescription className="px-6 text-center">
-                      Already have an account? <a href="/login">Sign in</a>
+                      Already have an account? <a href="/login">Login In</a>
                     </FieldDescription>
                   </Field>
                 </FieldGroup>
