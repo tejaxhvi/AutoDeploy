@@ -1,15 +1,14 @@
 import express from 'express'
 import cors from 'cors'
 import multer from 'multer'
-import fs from 'fs'
 import path from 'path'
 import { ConnectDB } from './mongoClient.js'
 
 const app = express()
 app.use(cors())
+app.use(express.json()) // needed to read req.body from fetch/axios
 const PORT = process.env.PORT ?? 8080
 
-// Defining Storage for the Multer.
 const storage = multer.diskStorage({
   destination: function (req, file, cb) { // cb -> callback function
     cb(null, `uploads/${file}`); // files will be saved to uploads/<filename>
@@ -21,8 +20,31 @@ const storage = multer.diskStorage({
   }
 });
 
-app.post('/signup', (req, res) => {
-  res.status(501).json({ message: 'Signup not implemented yet' })
+app.post('/signup', async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: 'All fields are required' });
+    }
+
+    // Save user to MongoDB
+    const db = await ConnectDB();
+    const users = db.collection('users');
+
+    // Check if email already exists
+    const existing = await users.findOne({ email });
+    if (existing) {
+      return res.status(409).json({ message: 'Email already registered' });
+    }
+
+    await users.insertOne({ name, email, password, createdAt: new Date() });
+
+    res.status(201).json({ message: 'Account created successfully!' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
 })
 
 const upload = multer({ storage: storage });
