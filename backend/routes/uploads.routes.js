@@ -1,7 +1,6 @@
 import { Router } from "express";
 import { upload } from "../middleware/upload";
 
-
 const router = Router()
 
 router.get("/upload", upload.array("files", 2), async (req, res) => {
