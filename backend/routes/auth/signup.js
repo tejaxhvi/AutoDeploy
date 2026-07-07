@@ -1,35 +1,37 @@
 import { Router } from "express";
+import { ConnectDB } from "../../services/mongodb";
+import { validate } from "../../middleware/validateRequest";
+import { signupSchema } from "../../types/userSchema";
 
-const router = Router()
-  
-router.post('/signup', async (req, res) => {
+const router = Router();
+
+router.post("/signup", validate(signupSchema), async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
-    if (!username || !email || !password) {
-      return res.status(400).json({ message: 'All fields are required' });
-    } else {
+    // Database Configuration
+    const db = await ConnectDB();
+    const users = db.collection("users");
 
-      users.push({
-        username,
-        password,
-        email
-      })
-
-      res.status(201).json({ message: 'Account created successfully!' });
+    const ExistingUser = await users.findOne({ email });
+    if (ExistingUser) {
+      return res.status(400).json({ message: "User is already registered" });
     }
 
-    // Save user to MongoDB
-    // const users = db.collection('users');
+    const HashPassword = await bcrypt.hash(password, 10);
 
-    // Check if email already exists
-    // const existing = await users.findOne({ email });
+    // Save User to Mongo Database
+    await users.insertOne({
+      username,
+      email,
+      password: HashPassword,
+      createdAt: new Date(),
+    });
 
-    // await users.insertOne({ name, email, password, createdAt: new Date() });
+    res.status(201).json({ message: "Account created successfully!" });
 
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: "Server error" });
   }
-})
-
+});

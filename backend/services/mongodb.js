@@ -10,13 +10,11 @@ const client = new MongoClient(uri, {
   },
 });
 
-// let db; // available even outside function scope
-
 export async function ConnectDB() {
   let db ;
   if (!db) {
     await client.connect();
-    db = client.db('RAG_Project');
+    db = client.db('AutoDeploy');
     console.log('Connected to MongoDB!');
   }
   return db;

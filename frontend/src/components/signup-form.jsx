@@ -1,45 +1,45 @@
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
   Field,
   FieldDescription,
   FieldGroup,
   FieldLabel,
-} from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
+} from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 
 export function SignupForm({ ...props }) {
   // Step 1: State to hold form values
-  const [name, setName] = useState("")
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [confirmPassword, setConfirmPassword] = useState("")
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   // Step 2: State to show feedback to the user
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState("")
-  const [success, setSuccess] = useState("")
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   // Step 3: Handle form submission
   async function handleSubmit(e) {
-    e.preventDefault() // prevent page reload (default browser behavior)
-    setError("")
-    setSuccess("")
+    e.preventDefault(); // prevent page reload (default browser behavior)
+    setError("");
+    setSuccess("");
 
     // Frontend validation
     if (password !== confirmPassword) {
-      setError("Passwords do not match.")
-      return
+      setError("Passwords do not match.");
+      return;
     }
 
-    setLoading(true)
+    setLoading(true);
 
     try {
       // Step 4: Send data to the backend using fetch
@@ -49,22 +49,22 @@ export function SignupForm({ ...props }) {
           "Content-Type": "application/json", // tell backend we're sending JSON
         },
         body: JSON.stringify({ name, email, password }), // convert JS object to JSON string
-      })
+      });
 
-      const data = await response.json() // parse the JSON response from backend
+      const data = await response.json(); // parse the JSON response from backend
 
       if (!response.ok) {
         // If server returned an error (4xx/5xx), show the message
-        setError(data.message)
+        setError(data.message);
       } else {
         // Success!
-        setSuccess(data.message)
+        setSuccess(data.message);
       }
     } catch (err) {
       // This runs if the backend is unreachable (server down, wrong URL, etc.)
-      setError("Could not connect to server. Is the backend running?")
+      setError("Could not connect to server. Is the backend running?", err);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
@@ -116,10 +116,14 @@ export function SignupForm({ ...props }) {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                   />
-                  <FieldDescription>Must be at least 8 characters long.</FieldDescription>
+                  <FieldDescription>
+                    Must be at least 8 characters long.
+                  </FieldDescription>
                 </Field>
                 <Field>
-                  <FieldLabel htmlFor="confirm-password">Confirm Password</FieldLabel>
+                  <FieldLabel htmlFor="confirm-password">
+                    Confirm Password
+                  </FieldLabel>
                   <Input
                     id="confirm-password"
                     type="password"
@@ -127,7 +131,9 @@ export function SignupForm({ ...props }) {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                   />
-                  <FieldDescription>Please confirm your password.</FieldDescription>
+                  <FieldDescription>
+                    Please confirm your password.
+                  </FieldDescription>
                 </Field>
 
                 {/* Step 6: Show error or success messages */}
@@ -153,5 +159,5 @@ export function SignupForm({ ...props }) {
         </Card>
       </div>
     </div>
-  )
+  );
 }
