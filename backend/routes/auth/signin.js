@@ -1,23 +1,59 @@
 import { Router } from "express";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+import { ConnectDB } from "../../services/mongodb.js";
+import { validate } from "../../middleware/validateRequest.js";
+import { signinSchema } from "../../types/userSchema.js";
 
+dotenv.config();
+
+const JWT_SECRET = process.env.JWT_SECRET;
 const router = Router();
 
-router.post('/signin', async (req, res) => {
-  const { username, password } = req.body;
+router.post("/signin", validate(signinSchema), async (req, res) => {
+  try {
 
-  const FindUser = users.find(user => user.username == username && user.password == password)
+    const { email, password } = req.body;
 
-  if (FindUser) {
-    const token = jwt.sign({ username }, JWT_SECRET)
+    // Database Configuration
+    const db = await ConnectDB();
+    const users = db.collection("users");
 
-    FindUser.token = token
+    const ExistingUser = await users.findOne({ email });
 
-    res.send({
-      token
-    })
-  } else {
-    res.status(403).send({
-      message: "Invalid username or password"
-    })
+    if (ExistingUser) {
+
+      if (await bcrypt.compare(password, ExistingUser.password)) {
+        console.log("Found User", ExistingUser)
+
+        const token = jwt.sign(
+          { email: ExistingUser.email, password: ExistingUser.password },
+          JWT_SECRET,
+          { expiresIn: '7d' }
+        );
+
+        // ExistingUser.token = token;
+
+        return res.status(200).json({
+          message: "Sign-In Successful !",
+          token: token,
+        });
+      } else {
+        res.status(403).json({
+          message: "Invalid Password."
+        })
+      }
+
+    } else {
+      res.status(403).send({
+        message: "User not Found !",
+      });
+    }
+  } catch (err) {
+    res.status(500).json({ message: "Internal Server Error !", error: err })
   }
+
 });
+
+export default router;
