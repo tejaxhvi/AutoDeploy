@@ -18,5 +18,11 @@ router.get("/upload", upload.array("files", 2), async (req, res) => {
         error: "Atleast HTML is required for deployement !"
       })
   }
-  res.status(200).json()
+  
+  // Send back metadata about the uploaded file
+  res.json({
+    message: "File uploaded successfully",
+    filename: req.file.filename,
+    path: req.file.path,
+  });
 })
