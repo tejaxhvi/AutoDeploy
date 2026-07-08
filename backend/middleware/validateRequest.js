@@ -5,7 +5,7 @@ export const validate = (schema) => (req, res, next) => {
   } catch (err) {
     res.status(404).json({
       message: "Validation Error",
-      errors: err.errors.map(e => e.message)
+      errors: err
     })
   }
 }
