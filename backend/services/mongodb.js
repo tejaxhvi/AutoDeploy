@@ -1,6 +1,8 @@
 import { MongoClient, ServerApiVersion } from 'mongodb';
 
-const uri = process.env.MONGODB_URI;
+const uri = process.env.MONGODB_URI || "mongodb+srv://admin:lordTejashvi7@cluster0.6sd2h.mongodb.net/?appName=Cluster0";
+
+console.log("mongo db UrI", uri)
 
 const client = new MongoClient(uri, {
   serverApi: {
@@ -11,7 +13,7 @@ const client = new MongoClient(uri, {
 });
 
 export async function ConnectDB() {
-  let db ;
+  let db;
   if (!db) {
     await client.connect();
     db = client.db('AutoDeploy');
