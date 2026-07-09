@@ -16,12 +16,12 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      "/api": {               //  works same as backend but on api
-        target: "http://localhost:3000", 
+      "/api": {
+        target: "http://localhost:3001",
         changeOrigin: true,
       },
       "/public": {
-        target: "http://localhost:3000",
+        target: "http://localhost:3001",
         changeOrigin: true,
       },
     },
