@@ -6,9 +6,9 @@ import bcrypt from 'bcrypt'
 
 const router = Router();
 
-router.post("/signup", validate(signupSchema), async (req, res) => {
+router.post("/", validate(signupSchema), async (req, res) => {
   try {
-    const { username, email, password } = req.body;
+    const { name, email, password } = req.body;
 
     // Database Configuration
     const db = await ConnectDB();
@@ -23,7 +23,7 @@ router.post("/signup", validate(signupSchema), async (req, res) => {
 
     // Save User to Mongo Database
     await users.insertOne({
-      username,
+      name,
       email,
       password: HashPassword,
       createdAt: new Date(),

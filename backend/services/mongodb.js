@@ -1,8 +1,10 @@
-import { MongoClient, ServerApiVersion } from 'mongodb';
+import { MongoClient, ServerApiVersion } from "mongodb";
 
-const uri = process.env.MONGODB_URI || "mongodb+srv://admin:lordTejashvi7@cluster0.6sd2h.mongodb.net/?appName=Cluster0";
+const uri = process.env.MONGODB_URI;
 
-console.log("mongo db UrI", uri)
+if (!uri) {
+  console.error("Error: MONGODB_URI is not defined in environment variables");
+}
 
 const client = new MongoClient(uri, {
   serverApi: {
@@ -13,12 +15,15 @@ const client = new MongoClient(uri, {
 });
 
 export async function ConnectDB() {
-  let db;
-  if (!db) {
-    await client.connect();
-    db = client.db('AutoDeploy');
-    console.log('Connected to MongoDB!');
+  try {
+    if (!client || !client.topology || !client.topology.isConnected) {
+      await client.connect();
+      console.log("Connected to MongoDB!");
+    }
+    const db = client.db("AutoDeploy");
+    return db;
+  } catch (error) {
+    console.error("MongoDB connection error:", error);
+    throw error;
   }
-  return db;
 }
-

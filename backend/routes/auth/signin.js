@@ -13,27 +13,29 @@ const router = Router();
 
 router.post("/signin", validate(signinSchema), async (req, res) => {
   try {
+    console.log("Received signin request:", req.body);
 
     const { email, password } = req.body;
 
     // Database Configuration
     const db = await ConnectDB();
+    if (!db) {
+      return res.status(500).json({ message: "Database connection failed" });
+    }
+
     const users = db.collection("users");
 
     const ExistingUser = await users.findOne({ email });
 
     if (ExistingUser) {
-
       if (await bcrypt.compare(password, ExistingUser.password)) {
-        console.log("Found User", ExistingUser)
-
         const token = jwt.sign(
           { email: ExistingUser.email, password: ExistingUser.password },
           JWT_SECRET,
-          { expiresIn: '7d' }
+          { expiresIn: "7d" },
         );
 
-        // ExistingUser.token = token;
+        console.log("Found User", ExistingUser, token);
 
         return res.status(200).json({
           message: "Sign-In Successful !",
@@ -41,19 +43,21 @@ router.post("/signin", validate(signinSchema), async (req, res) => {
         });
       } else {
         res.status(403).json({
-          message: "Invalid Password."
-        })
+          message: "Invalid Password.",
+        });
       }
-
     } else {
-      res.status(403).send({
+      res.status(403).json({
         message: "User not Found !",
       });
     }
   } catch (err) {
-    res.status(500).json({ message: "Internal Server Error !", error: err })
+    console.error("Signin error:", err);
+    res.status(500).json({
+      message: "Internal Server Error !",
+      error: err.message || err.toString(),
+    });
   }
-
 });
 
 export default router;

@@ -3,9 +3,10 @@ export const validate = (schema) => (req, res, next) => {
     schema.parse(req.body);
     next() // If valid, move to controller
   } catch (err) {
-    res.status(404).json({
+    console.error("Validation error:", err);
+    res.status(400).json({
       message: "Validation Error",
-      errors: err
-    })
+      errors: err.errors || err
+    });
   }
 }
