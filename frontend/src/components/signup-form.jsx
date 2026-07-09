@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -16,6 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 
 export function SignupForm({ ...props }) {
+  const navigate = useNavigate();
   // Step 1: State to hold form values
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -43,7 +45,7 @@ export function SignupForm({ ...props }) {
 
     try {
       // Step 4: Send data to the backend using fetch
-      const response = await fetch("http://localhost:8080/signup", {
+      const response = await fetch("http://localhost:3000/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json", // tell backend we're sending JSON
@@ -59,6 +61,7 @@ export function SignupForm({ ...props }) {
       } else {
         // Success!
         setSuccess(data.message);
+        setTimeout(() => navigate("/login"), 1500);
       }
     } catch (err) {
       // This runs if the backend is unreachable (server down, wrong URL, etc.)
