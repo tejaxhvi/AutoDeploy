@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router";
 import {
   Card,
   CardContent,
@@ -17,18 +18,18 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 
 export function LoginForm({ className, ...props }) {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [message, setMessage] = useState("");
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    setErrorMessage("");
+    setMessage("");
 
     try {
-      console.log(email, password);
       const response = await fetch("/api/signin", {
         method: "POST",
         headers: {
@@ -43,9 +44,14 @@ export function LoginForm({ className, ...props }) {
         throw new Error(
           data.message || "Failed to Login. Please check your credentials.",
         )
+      } else {
+        // Success!
+        localStorage.setItem('token',data.token)
+        setMessage(data.message);
+        setTimeout(() => navigate("/dashboard"), 1500);
       }
     } catch (error) {
-      setErrorMessage(error.message);
+      setMessage(error.message);
     } finally {
       setIsLoading(false);
     }
@@ -92,12 +98,18 @@ export function LoginForm({ className, ...props }) {
                     />
                   </Field>
 
-                  {errorMessage && (
-                    <div className="text-sm text-red-500 text-center font-medium">
-                      {errorMessage}
+                  {message && (
+                    <div
+                      className={`text-sm text-center font-medium ${
+                        message.toLowerCase().includes("success")
+                          ? "text-green-600"
+                          : "text-red-500"
+                      }`}
+                    >
+                      {message}
                     </div>
                   )}
-
+             
                   <Field>
                     <Button type="submit" disable={isLoading}>
                       {isLoading ? "Logging in..." : "Login"}
