@@ -15,7 +15,8 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import isAuthenticated from "@/lib/auth";
 
 export function LoginForm({ className, ...props }) {
   const navigate = useNavigate();
@@ -23,6 +24,12 @@ export function LoginForm({ className, ...props }) {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState("");
+
+  useEffect(() =>{
+    if (isAuthenticated){
+      navigate('/dashboard', {replace : true})
+    }
+  }, [navigate])
 
   const handleLogin = async (e) => {
     e.preventDefault();
