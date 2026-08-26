@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
-import isAuthenticated from "@/lib/auth";
+import isAuthenticated , { getToken } from "@/lib/auth";
 
 export function LoginForm({ className, ...props }) {
   const navigate = useNavigate();
@@ -26,7 +26,7 @@ export function LoginForm({ className, ...props }) {
   const [message, setMessage] = useState("");
 
   useEffect(() =>{
-    if (isAuthenticated){
+    if (isAuthenticated()){
       navigate('/dashboard', {replace : true})
     }
   }, [navigate])
@@ -41,22 +41,29 @@ export function LoginForm({ className, ...props }) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ 
+          email, 
+          password }),
       });
+
 
       const data = await response.json();
       console.log("Response from Backend", data);
+
       if (!response.ok) {
         throw new Error(
-          data.message || "Failed to Login. Please check your credentials.",
-        )
-      } else {
-        // Success!
-        localStorage.setItem('token',data.token)
-        setMessage(data.message);
-        setTimeout(() => navigate("/dashboard"), 1500);
+          data.message || "Failed to login. Please check your credentials.",
+        );
       }
+
+      localStorage.setItem("token", data.token);
+
+      setMessage(data.message);
+
+      navigate("/dashboard", { replace: true });
+      
     } catch (error) {
       setMessage(error.message);
     } finally {

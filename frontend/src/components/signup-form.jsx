@@ -35,7 +35,6 @@ export function SignupForm({ ...props }) {
     setError("");
     setSuccess("");
 
-    // Frontend validation
     if (password !== confirmPassword) {
       setError("Passwords do not match.");
       return;
@@ -44,22 +43,19 @@ export function SignupForm({ ...props }) {
     setLoading(true);
 
     try {
-      // Step 4: Send data to the backend using fetch
-      const response = await fetch("http://localhost:3000/signup", {
+      const response = await fetch("http://locahhost:3000/api/signup", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json", // tell backend we're sending JSON
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name, email, password }), // convert JS object to JSON string
+        body: JSON.stringify({ name, email, password }),
       });
 
       const data = await response.json(); // parse the JSON response from backend
 
       if (!response.ok) {
-        // If server returned an error (4xx/5xx), show the message
         setError(data.message);
       } else {
-        // Success!
         setSuccess(data.message);
         setTimeout(() => navigate("/login"), 1500);
       }
