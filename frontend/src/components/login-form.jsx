@@ -16,17 +16,20 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
-import isAuthenticated , { getToken } from "@/lib/auth";
+import { useAuth } from "@/AuthContext";
 
 export function LoginForm({ className, ...props }) {
+
+  const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState("");
 
   useEffect(() =>{
-    if (isAuthenticated()){
+    if (isAuthenticated){
       navigate('/dashboard', {replace : true})
     }
   }, [navigate])
@@ -41,7 +44,6 @@ export function LoginForm({ className, ...props }) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ 
           email, 
@@ -63,7 +65,7 @@ export function LoginForm({ className, ...props }) {
       setMessage(data.message);
 
       navigate("/dashboard", { replace: true });
-      
+
     } catch (error) {
       setMessage(error.message);
     } finally {

@@ -5,6 +5,7 @@ import { UploadDeploymentForm } from "@/components/UploadDeploymentForm"
 import { DeploymentGrid } from "@/components/DeploymentGrid"
 import { useState } from "react"
 import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog"
+import { useAuth } from "@/AuthContext"
 
 const mockDeployments = [
   {
@@ -38,13 +39,19 @@ const mockDeployments = [
 
 export default function Dashboard() {
 
+  const { user , isAuthenticated  } = useAuth();
+
   const [isOpen, setIsOpen] = useState(false);
+
+   useEffect(() => {
+    if (!user && !isAuthenticated) {
+      navigate('/login');
+    }
+  }, [isAuthenticated, loading, navigate]);
 
   const handleUpload = (e) => {
     e.preventDefault()
-    console.log("Upload submitted")
   }
-
 
   return (
     <div className="min-h-dvh bg-background">
@@ -55,7 +62,7 @@ export default function Dashboard() {
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <User size={16} />
-              user@example.com
+              { user.name }
             </div>
 
             <Button variant="ghost" size="sm" className="h-8 gap-1.5">
