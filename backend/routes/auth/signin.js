@@ -2,7 +2,7 @@ import { Router } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import { ConnectDB } from "../../services/mongodb.js";
+import { db } from "../../services/mongodb.js";
 import { validate } from "../../middleware/validateRequest.js";
 import { signinSchema } from "../../types/userSchema.js";
 
@@ -13,12 +13,9 @@ const router = Router();
 
 router.post("/signin", validate(signinSchema), async (req, res) => {
   try {
-    console.log("Received signin request:", req.body);
-
     const { email, password } = req.body;
 
-    // Database Configuration
-    const db = await ConnectDB();
+    console.log(req.body);
     if (!db) {
       return res.status(500).json({ message: "Database connection failed" });
     }
@@ -29,13 +26,9 @@ router.post("/signin", validate(signinSchema), async (req, res) => {
 
     if (ExistingUser) {
       if (await bcrypt.compare(password, ExistingUser.password)) {
-        const token = jwt.sign(
-          { email: ExistingUser.email, password: ExistingUser.password },
-          JWT_SECRET,
-          { expiresIn: "7d" },
-        );
-
-        console.log("Found User", ExistingUser, token);
+        const token = jwt.sign({ email: ExistingUser.email }, JWT_SECRET, {
+          expiresIn: "7d",
+        });
 
         return res.status(200).json({
           message: "Sign-In Successful !",
@@ -43,7 +36,7 @@ router.post("/signin", validate(signinSchema), async (req, res) => {
         });
       } else {
         res.status(403).json({
-          message: "Invalid Password.",
+          message: "Invalid Email or Password.",
         });
       }
     } else {

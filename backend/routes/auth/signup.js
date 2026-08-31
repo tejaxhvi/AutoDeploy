@@ -1,17 +1,15 @@
 import { Router } from "express";
-import { ConnectDB } from "../../services/mongodb.js";
+import { db } from "../../services/mongodb.js";
 import { validate } from "../../middleware/validateRequest.js";
 import { signupSchema } from "../../types/userSchema.js";
-import bcrypt from 'bcrypt'
+import bcrypt from "bcrypt";
 
 const router = Router();
 
-router.post("/", validate(signupSchema), async (req, res) => {
+router.post("/signup", validate(signupSchema), async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    // Database Configuration
-    const db = await ConnectDB();
     const users = db.collection("users");
 
     const ExistingUser = await users.findOne({ email });
@@ -21,7 +19,6 @@ router.post("/", validate(signupSchema), async (req, res) => {
 
     const HashPassword = await bcrypt.hash(password, 10);
 
-    // Save User to Mongo Database
     await users.insertOne({
       name,
       email,
