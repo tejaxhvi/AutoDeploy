@@ -1,36 +1,46 @@
+import { AuthContext } from "@/AuthContext";
 import { jwtDecode } from "jwt-decode";
+import { useContext } from "react";
 
-export function getToken() {
-  return localStorage.getItem('token')
-}
+const JWT_SECRET =
+  import.meta.env.VITE_JWT_SECRET ||
+  "THIS-IS-MY-FIRST-PROJECT-WHERE-IAM-LEARNING";
 
-export function setToken( token ) {
-  return localStorage.setItem('token', token)
-}
+const BACKEND_URI = import.meta.env.VITE_BACKEND_URL;
 
-export const clearToken = () => {
-  localStorage.clear('token')
-}
-
-export const getHeader = () => {
-  const token = getToken();
-  return token ? { 'Authorization': `Bearer ${token}` } : {}
-}
-
-export function isTokenExpired(){
-   const token = getToken();
-
-  if (!token) {
-    return true;
+export async function getUserFromToken(token) {
+  if (!JWT_SECRET) {
+    throw new Error("JWT_SECRET is not defined");
   }
+  if (!token) throw new Error("No token found!")
+  const decoded = jwtDecode(token);
+  console.log(decoded);
 
-  const decode = jwtDecode(token)
-  const isExpired = decode.exp < Date.now() / 1000;
+  try {
+    const response = await fetch("/api/user", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorisation: `Bearer ${token}`,
+      },
+    });
 
-  if (isExpired) {
-      clearToken()
-      return true;
+    const data = await response.json();
+
+    console.log("Response from Backend", data);
+
+    if (!response.ok) {
+      throw new Error(
+        data.message || "Failed to login. Please check your credentials.",
+      );
     }
 
-  return false;
+    return data;
+  } catch (err) {
+    throw new Error("Backend is Down !", err);
+  }
+}
+
+export default function useAuth() {
+  return useContext(AuthContext);
 }

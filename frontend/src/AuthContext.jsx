@@ -1,43 +1,52 @@
-import { createContext, useContext, useEffect, useState } from "react";
-import { isTokenExpired } from "./lib/auth";
+import { createContext, useState } from "react";
+import { getUserFromToken } from "./lib/auth";
+import { useEffect } from "react";
 
-const AuthContext = createContext(null);
+export const AuthContext = createContext({
+  user: null,
+  loading: true,
+  error: null,
+});
 
 export default function AuthProvider({ children }) {
-    const [ user , setUser ] = useState(null);
-    const [ Isloading , setIsLoading] = useState(true);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-    const isAuthenticated = false;
+  useEffect(() => {
+    let mounted = true;
 
-    useEffect( () => {
-        async function checkUser() {
-        if( !isTokenExpired()) {
-            const response = await fetch('/api/me', {
-                method : 'GET',
-                headers : {
-                    'Content-Type' : 'application/json',
-                    'Authorization': `Bearer ${token}`
-                }
-            })
+    async function getUserInfo() {
+      try {
+        const token = localStorage.getItem('token')
+        const userInfo = await getUserFromToken(token);
+        console.log(userInfo);
 
-            const data = response.json();
-
-            if (response.ok){
-                console.log("Got the Response !!")
-                setUser(data.user)
-            }
-    
-        } else {
-            setIsLoading(false); // No token No loading
+        if (mounted) {
+          setUser(userInfo);
         }
+      } catch (err) {
+        console.error("[AuthContext] Failed to load user:", err.message);
+        if (mounted) {
+          setError(err);
+        }
+      } finally {
+        if (mounted) {
+          setLoading(false);
+        }
+      }
     }
-    checkUser();
-    })
-    return(
-        <AuthContext.Provider value={{ user , Isloading , isAuthenticated}}>
-            { children }
-        </AuthContext.Provider>
-    )
-}
 
-export const useAuth = () => useContext(AuthContext);
+    getUserInfo();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  return (
+    <AuthContext.Provider value={{ user, loading, error }}>
+      {children}
+    </AuthContext.Provider>
+  );
+}

@@ -3,9 +3,10 @@ import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { UploadDeploymentForm } from "@/components/UploadDeploymentForm"
 import { DeploymentGrid } from "@/components/DeploymentGrid"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog"
-import { useAuth } from "@/AuthContext"
+import useAuth from "@/lib/auth";
+import { useNavigate } from "react-router"
 
 const mockDeployments = [
   {
@@ -39,15 +40,16 @@ const mockDeployments = [
 
 export default function Dashboard() {
 
-  const { user , isAuthenticated  } = useAuth();
+  const { user, loading } = useAuth();
 
   const [isOpen, setIsOpen] = useState(false);
 
-   useEffect(() => {
-    if (!user && !isAuthenticated) {
-      navigate('/login');
-    }
-  }, [isAuthenticated, loading, navigate]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!user && !loading) navigate('/login');
+
+  }, [loading, user]);
 
   const handleUpload = (e) => {
     e.preventDefault()
@@ -62,7 +64,7 @@ export default function Dashboard() {
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <User size={16} />
-              { user.name }
+              {user?.name}
             </div>
 
             <Button variant="ghost" size="sm" className="h-8 gap-1.5">

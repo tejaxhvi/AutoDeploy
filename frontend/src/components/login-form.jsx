@@ -16,11 +16,11 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
-import { useAuth } from "@/AuthContext";
+import useAuth from "@/lib/auth";
 
 export function LoginForm({ className, ...props }) {
 
-  const { isAuthenticated } = useAuth();
+  const { user, loading } = useAuth();
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
@@ -29,10 +29,10 @@ export function LoginForm({ className, ...props }) {
   const [message, setMessage] = useState("");
 
   useEffect(() =>{
-    if (isAuthenticated){
+    if (user && !loading ){
       navigate('/dashboard', {replace : true})
     }
-  }, [navigate])
+  }, [user , navigate, loading])
 
   const handleLogin = async (e) => {
     e.preventDefault();
