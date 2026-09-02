@@ -14,7 +14,7 @@ const client = new MongoClient(uri, {
   },
 });
 
-export async function ConnectDB() {
+async function ConnectDB() {
   try {
     if (!client || !client.topology || !client.topology.isConnected) {
       await client.connect();
@@ -27,3 +27,6 @@ export async function ConnectDB() {
     throw error;
   }
 }
+
+export const db = await ConnectDB();
+

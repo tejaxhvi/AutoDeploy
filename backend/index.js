@@ -1,8 +1,9 @@
 import express from "express";
 import cors from "cors";
 import env from "./config/env.js";
-import banna from "./routes/auth/signin.js";
-import signup from "./routes/auth/signup.js";
+import SignIn from "./routes/auth/signin.js";
+import SignUp from "./routes/auth/signup.js";
+import router from "./routes/uploads.routes.js"
 
 const app = express();
 app.use(cors());
@@ -10,11 +11,10 @@ app.use(express.json()); // needed to read req.body from fetch/axios
 
 const PORT = process.env.PORT ?? 3001;
 
-// Mount routes with /api prefix to match frontend calls
-app.use("/api", banna);
-app.use("/api", signup);
+app.use("/api", SignIn);
+app.use("/api", SignUp);
+app.use("/api", router);
 
-// Global error handler
 app.use((err, req, res, next) => {
   console.error("Unhandled error:", err);
   res.status(500).json({
