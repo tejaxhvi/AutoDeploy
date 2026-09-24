@@ -1,3 +1,6 @@
+import jwt from "jsonwebtoken";
+import { db } from "../services/mongodb.js";
+
 export default async function ValidateRequest(req, res, next) {
   const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -31,11 +34,4 @@ export default async function ValidateRequest(req, res, next) {
       error: err.message || err
     });
   }
-
-  return res.status(200).json({
-    data: {
-      email: ExistingUser.email,
-      name: ExistingUser.username,
-    },
-  });
 }

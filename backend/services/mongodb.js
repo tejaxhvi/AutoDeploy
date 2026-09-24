@@ -29,4 +29,3 @@ async function ConnectDB() {
 }
 
 export const db = await ConnectDB();
-
