@@ -3,6 +3,8 @@ import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { upload } from "../middleware/upload.js";
 import { db } from "../services/mongodb.js";
 import { BUCKET_NAME, S3 } from "../services/database.js";
+import { randomUUID } from "crypto";
+import path from "path";
 import ValidateRequest from "../middleware/auth.controller.js";
 
 const router = Router();
@@ -19,33 +21,41 @@ router.post("/upload", ValidateRequest, upload.array("files"), async (req, res) 
       return res.status(400).json({
         message: "Atleast HTML is required for deployement !",
       });
-  }
+    }
+
+    const deployementId = randomUUID().slice(0, 8);
+    const prefix = `deployments/${deployementId}/`;
+
+    const items = req.files.map((file) => ({
+      file,
+      key: prefix + path.basename(file.originalname),
+    }));
 
     try {
-      const uploadPromises = req.files.map((file) => {
-        const Filekey = `uploads/${Date.now()}-${file.originalname}`;
-
-        const command = new PutObjectCommand({
-          Bucket: BUCKET_NAME,
-          Key: Filekey,
-          Body: file.buffer,
-          ContentType: file.mimetype,
-        });
-
-        return { Filekey, command };
-      });
-
-      const uploadedFiles = await Promise.all(
-        uploadPromises.map(({ command }) => S3.send(command)),
+      await Promise.all(
+        items.map(({ file, key }) => {
+          S3.send(
+            new PutObjectCommand({
+              Bucket: BUCKET_NAME,
+              Key: key,
+              Body: file.buffer,
+              ContentType: file.mimetype,
+            }),
+          );
+        }),
       );
 
-      const StatusCode = uploadedFiles[0]["$metadata"].httpStatusCode;
-      if (!StatusCode === 200) {
-        return res.status(401).json({ message: "File Upload Unsuccessful!" });
-      }
-      return res.json({
+      // Save file details to database.
+      await db.collection("data").insertOne({
+        user: req.user,
+        deployementId,
+        files: items.map((i) => i.key),
+        createdAt: new Date(),
+      });
+
+      return res.status(201).json({
         message: "Files uploaded successfully",
-        FilesPath: uploadPromises.map((u) => u.Filekey),
+        deployementId,
         files: req.files.map((f) => ({
           filename: f.originalname,
           mimetype: f.mimetype,
@@ -53,9 +63,10 @@ router.post("/upload", ValidateRequest, upload.array("files"), async (req, res) 
         })),
       });
     } catch (err) {
-      return res
-        .status(400)
-        .json({ message: "Upload Unsuccessful !", error: err.message || err });
+      console.error(err);
+      return res.status(400).json({
+        message: "Upload Unsuccessful !",
+      });
     }
   },
 );
