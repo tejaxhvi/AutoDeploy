@@ -3,7 +3,8 @@ import cors from "cors";
 import env from "./config/env.js";
 import SignIn from "./routes/auth/signin.js";
 import SignUp from "./routes/auth/signup.js";
-import router from "./routes/uploads.routes.js"
+import router from "./routes/uploads.routes.js";
+import dashboard from "./routes/dashboard.routes.js"
 
 const app = express();
 app.use(cors());
@@ -14,6 +15,7 @@ const PORT = process.env.PORT ?? 3001;
 app.use("/api", SignIn);
 app.use("/api", SignUp);
 app.use("/api", router);
+app.use("/api", dashboard);
 
 app.use((err, req, res, next) => {
   console.error("Unhandled error:", err);

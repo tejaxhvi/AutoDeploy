@@ -22,14 +22,14 @@ export default async function ValidateRequest(req, res, next) {
     const ExistingUser = await users.findOne({ email });
 
     if (!ExistingUser) {
-      res.status(401).json({
+      return res.status(401).json({
         message: "User not Found !",
       });
     }
     req.user = email;
     next();
   } catch (err) {
-    res.status(500).json({
+    return res.status(500).json({
       message: "Internal Server Error !",
       error: err.message || err
     });
