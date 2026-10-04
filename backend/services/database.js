@@ -1,11 +1,19 @@
-import { S3Client } from "@aws-sdk/client-s3";
+import { Storage } from "@google-cloud/storage";
 
-export const S3 = new S3Client({
-    region: process.env.AWS_REGION,
-    credentials: {
-        accessKeyId: process.env.S3_ACCESS_KEY,
-        secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
-    }
-})
+const bucketName = process.env.GCS_BUCKET;
 
-export const BUCKET_NAME = process.env.S3_BUCKET_ID;
+if (!bucketName) {
+  throw new Error("GCS_BUCKET is not defined in environment variables");
+}
+
+const storage = new Storage();
+const bucket = storage.bucket(bucketName);
+
+export async function uploadObject({ key, body, contentType }) {
+  await bucket.file(key).save(body, {
+    resumable: false,
+    metadata: {
+      contentType,
+    },
+  });
+}

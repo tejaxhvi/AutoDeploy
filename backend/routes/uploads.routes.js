@@ -1,8 +1,7 @@
 import { Router } from "express";
-import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { upload } from "../middleware/upload.js";
 import { db } from "../services/mongodb.js";
-import { BUCKET_NAME, S3 } from "../services/database.js";
+import { uploadObject } from "../services/database.js";
 import { randomUUID } from "crypto";
 import path from "path";
 import ValidateRequest from "../middleware/auth.controller.js";
@@ -33,16 +32,13 @@ router.post("/upload", ValidateRequest, upload.array("files"), async (req, res) 
 
     try {
       await Promise.all(
-        items.map(({ file, key }) => {
-          S3.send(
-            new PutObjectCommand({
-              Bucket: BUCKET_NAME,
-              Key: key,
-              Body: file.buffer,
-              ContentType: file.mimetype,
-            }),
-          );
-        }),
+        items.map(({ file, key }) =>
+          uploadObject({
+            key,
+            body: file.buffer,
+            contentType: file.mimetype,
+          }),
+        ),
       );
 
       // Save file details to database.
