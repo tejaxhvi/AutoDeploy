@@ -5,6 +5,7 @@ import { uploadObject } from "../services/database.js";
 import { randomUUID } from "crypto";
 import path from "path";
 import ValidateRequest from "../middleware/auth.controller.js";
+import { publishToDisk } from "../services/publisher.js";
 
 const router = Router();
 
@@ -22,8 +23,8 @@ router.post("/upload", ValidateRequest, upload.array("files"), async (req, res) 
       });
     }
 
-    const deployementId = randomUUID().slice(0, 8);
-    const prefix = `deployments/${deployementId}/`;
+    const deploymentId = randomUUID().slice(0, 8);
+    const prefix = `deployments/${deploymentId}/`;
 
     const items = req.files.map((file) => ({
       file,
@@ -41,17 +42,19 @@ router.post("/upload", ValidateRequest, upload.array("files"), async (req, res) 
         ),
       );
 
+      await publishToDisk({ deploymentId, files: req.files });
+
       // Save file details to database.
       await db.collection("data").insertOne({
         user: req.user,
-        deployementId,
+        deploymentId,
         files: items.map((i) => i.key),
         createdAt: new Date(),
       });
 
       return res.status(201).json({
         message: "Files uploaded successfully",
-        deployementId,
+        deploymentId,
         files: req.files.map((f) => ({
           filename: f.originalname,
           mimetype: f.mimetype,

@@ -1,0 +1,21 @@
+{
+	auto_https off
+}
+
+http://api.localhost:8080 {
+	reverse_proxy localhost:3000
+}
+
+http://*.localhost:8080 {
+	@site header_regexp site Host ^([a-z0-9-]+)\.localhost(:\d+)?$
+
+	handle @site {
+		root * {$SITES_ROOT}/{re.site.1}
+		encode zstd gzip
+		file_server
+	}
+
+	handle {
+		respond "Not found" 404
+	}
+}

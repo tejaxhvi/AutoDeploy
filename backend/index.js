@@ -17,6 +17,14 @@ app.use("/api", SignUp);
 app.use("/api", router);
 app.use("/api", dashboard);
 
+app.get("/api/check", (req, res) => {
+  const head = req.get("X-From-Caddy");
+
+  console.log(head);
+
+  res.json({ head });
+});
+
 app.use((err, req, res, next) => {
   console.error("Unhandled error:", err);
   res.status(500).json({
