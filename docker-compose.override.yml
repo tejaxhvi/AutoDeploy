@@ -1,0 +1,14 @@
+services:
+  backend:
+    environment:
+      SITE_DOMAIN: localhost:8080
+    ports:
+      - "127.0.0.1:3000:3000" # debugging only, loopback only
+
+  caddy:
+    environment:
+      SITES_ROOT: /home/tejashvi/projects/AutoDeploy
+    ports:
+      - "8080:80"
+    volumes:
+      - ./Caddyfile.local:/etc/caddy/Caddyfile:ro

@@ -4,9 +4,13 @@ services:
   backend:
     build: 
       context: backend
+    restart: unless-stopped
+    env_file: ./backend/.env
     container_name: Backend
     ports: 
       - "3000:3000"
+    volumes:
+      - sites:/srv/sites
 
   frontend:
     build: 
@@ -14,8 +18,8 @@ services:
       target: build
     container_name: Frontend
     volumes: 
-      - frontend_build:/app/dist
-    command : sh -c "cp -r /app/dist/* /output"
+      - frontend_build:/output
+    command : sh -c "rm -rf /output/* && cp -r /app/dist/* /output"
     depends_on:
       - backend
   caddy:
@@ -26,13 +30,15 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - frontend_build:/srv
+      - sites:/srv/sites:ro
+      - frontend_build:/srv/frontend:ro
       - ./Caddyfile:/etc/caddy/Caddyfile
       - caddy_data:/data
       - caddy_config:/config
     depends_on :
       - frontend
 volumes:
+  sites:
   frontend_build :
   caddy_data:
   caddy_config:

@@ -1,7 +1,7 @@
 import { mkdir, writeFile, rename, rm } from "fs/promises";
 import path from "path";
 
-const SITES_ROOT = `/home/tejashvi/projects/AutoDeploy/sites`;
+const SITES_ROOT = process.env.SITES_ROOT;
 const ID_PATTERN = /^[a-f0-9-]{8}$/;
 
 /*
