@@ -16,11 +16,12 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
-import useAuth from "@/lib/auth";
+import { useContext } from "react";
+import { AuthContext } from "@/context/create-context";
 
 export function LoginForm({ className, ...props }) {
 
-  const { user, loading } = useAuth();
+  const { user, loading } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
@@ -29,7 +30,7 @@ export function LoginForm({ className, ...props }) {
   const [message, setMessage] = useState("");
 
   useEffect(() =>{
-    if (user && !loading ){
+    if (user?.name && !loading) {
       navigate('/dashboard', {replace : true})
     }
   }, [user , navigate, loading])

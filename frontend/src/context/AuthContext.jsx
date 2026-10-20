@@ -1,12 +1,7 @@
-import { createContext, useState } from "react";
-import { getUserFromToken } from "./lib/auth";
+import { useState } from "react";
+import { getUserFromToken } from "../lib/auth.js";
 import { useEffect } from "react";
-
-export const AuthContext = createContext({
-  user: null,
-  loading: true,
-  error: null,
-});
+import { AuthContext } from "./create-context";
 
 export default function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
@@ -18,12 +13,13 @@ export default function AuthProvider({ children }) {
 
     async function getUserInfo() {
       try {
-        const token = localStorage.getItem('token')
-        const userInfo = await getUserFromToken(token);
-        console.log(userInfo);
+        const token = localStorage.getItem("token");
+        if (token) {
+          const userInfo = await getUserFromToken(token);
 
-        if (mounted) {
-          setUser(userInfo);
+          if (mounted) {
+            setUser(userInfo);
+          }
         }
       } catch (err) {
         console.error("[AuthContext] Failed to load user:", err.message);

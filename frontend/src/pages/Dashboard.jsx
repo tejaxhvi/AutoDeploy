@@ -3,10 +3,10 @@ import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { UploadDeploymentForm } from "@/components/UploadDeploymentForm"
 import { DeploymentGrid } from "@/components/DeploymentGrid"
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog"
-import useAuth from "@/lib/auth";
 import { useNavigate } from "react-router"
+import { AuthContext } from "@/context/create-context"
 
 const mockDeployments = [
   {
@@ -39,17 +39,16 @@ const mockDeployments = [
 ]
 
 export default function Dashboard() {
-
-  const { user, loading } = useAuth();
+  const { user } = useContext(AuthContext)
 
   const [isOpen, setIsOpen] = useState(false);
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!user && !loading) navigate('/login');
+    if (!user) navigate("/login");
 
-  }, [loading, user]);
+  }, [navigate, user]);
 
   const handleUpload = (e) => {
     e.preventDefault()
