@@ -4,7 +4,8 @@ import env from "./config/env.js";
 import SignIn from "./routes/auth/signin.js";
 import SignUp from "./routes/auth/signup.js";
 import router from "./routes/uploads.routes.js";
-import dashboard from "./routes/dashboard.routes.js"
+import dashboard from "./routes/dashboard.routes.js";
+import user from "./routes/user.routes.js";
 
 const app = express();
 app.use(cors());
@@ -16,6 +17,7 @@ app.use("/api", SignIn);
 app.use("/api", SignUp);
 app.use("/api", router);
 app.use("/api", dashboard);
+app.use("/api", user);
 
 app.get("/api/check", (req, res) => {
   const head = req.get("X-From-Caddy");
@@ -29,7 +31,7 @@ app.use((err, req, res, next) => {
   console.error("Unhandled error:", err);
   res.status(500).json({
     message: "Internal Server Error",
-    error: process.env.NODE_ENV === 'development' ? err.message : undefined
+    error: process.env.NODE_ENV === "development" ? err.message : undefined,
   });
 });
 
@@ -43,7 +45,7 @@ app.listen(PORT, () => {
   console.log(`Server is running on PORT ${PORT}`);
 });
 
-process.on('unhandledRejection', (err) => {
-  console.error('Unhandled Rejection in Promise:', err);
+process.on("unhandledRejection", (err) => {
+  console.error("Unhandled Rejection in Promise:", err);
   // Don't exit, let the app continue running
 });
