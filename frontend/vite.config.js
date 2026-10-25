@@ -14,17 +14,17 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  server: {
-    proxy: {
-      "/api": {
-        target: "http://localhost:3000",
-        changeOrigin: true,
-      },
-      "/public": {
-        target: "http://localhost:3000",
-        changeOrigin: true,
-      },
-    },
-    allowedHosts: ["tejsv.tech", ".tejsv.tech"],
-  },
+  // server: {
+  //   proxy: {
+  //     "/api": {
+  //       target: "http://localhost:3000",
+  //       changeOrigin: true,
+  //     },
+  //     "/public": {
+  //       target: "http://localhost:3000",
+  //       changeOrigin: true,
+  //     },
+  //   },
+  //   allowedHosts: ["tejsv.tech", ".tejsv.tech"],
+  // },
 });

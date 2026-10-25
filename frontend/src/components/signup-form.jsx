@@ -43,7 +43,7 @@ export function SignupForm({ ...props }) {
     setLoading(true);
 
     try {
-      const response = await fetch("http://locahhost:3000/api/signup", {
+      const response = await fetch("/api/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

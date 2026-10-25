@@ -6,7 +6,7 @@ http://api.localhost:8080 {
 	reverse_proxy localhost:3000
 }
 
-http://*.localhost:8080 {
+http://*.localhost {
 	@site header_regexp site Host ^([a-z0-9-]+)\.localhost(:\d+)?$
 
 	handle @site {
@@ -18,4 +18,19 @@ http://*.localhost:8080 {
 	handle {
 		respond "Not found" 404
 	}
+}
+
+http://localhost {
+
+    handle /api/* {
+        reverse_proxy backend:3000
+    }
+
+    handle {
+        root * /srv/frontend
+
+        try_files {path} /index.html
+
+        file_server
+    }
 }
